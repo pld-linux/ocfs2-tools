@@ -1,12 +1,12 @@
 Summary:	Tools for the OCFS2 filesystem
 Summary(pl):	Narzêdzia dla systemu plików OCFS2
 Name:		ocfs2-tools
-Version:	1.1.2
+Version:	1.2.1
 Release:	1
 License:	GPL v2
 Group:		Applications/System
-Source0:	http://oss.oracle.com/projects/ocfs2-tools/dist/files/source/v1.1/%{name}-%{version}.tar.gz
-# Source0-md5:	f2412153cf33db29e10549c855c43e35
+Source0:	http://oss.oracle.com/projects/ocfs2-tools/dist/files/source/v1.2/%{name}-%{version}.tar.gz
+# Source0-md5:	62c24ae0f3016eb5c15f0dfc90fe956a
 URL:		http://oss.oracle.com/projects/ocfs2-tools/
 BuildRequires:	e2fsprogs-devel
 BuildRequires:	glib2-devel
