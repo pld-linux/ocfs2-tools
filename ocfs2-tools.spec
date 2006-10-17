@@ -7,6 +7,8 @@ License:	GPL v2
 Group:		Applications/System
 Source0:	http://oss.oracle.com/projects/ocfs2-tools/dist/files/source/v1.2/%{name}-%{version}.tar.gz
 # Source0-md5:	62c24ae0f3016eb5c15f0dfc90fe956a
+Source1:	ocfs2.init
+Source2:	o2cb.init
 URL:		http://oss.oracle.com/projects/ocfs2-tools/
 BuildRequires:	e2fsprogs-devel
 BuildRequires:	glib2-devel
@@ -48,9 +50,13 @@ Interfejs GTK+ do narzêdzi OCFS2.
 
 %install
 rm -rf $RPM_BUILD_ROOT
+install -d $RPM_BUILD_ROOT/etc/rc.d/init.d
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
+
+install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/ocfs2
+install %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/o2cb
 
 %py_ocomp $RPM_BUILD_ROOT%{py_sitedir}
 %py_comp $RPM_BUILD_ROOT%{py_sitedir}
@@ -58,11 +64,27 @@ rm -rf $RPM_BUILD_ROOT
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post	-p /sbin/ldconfig
 %postun -p /sbin/ldconfig
+
+%post
+/sbin/ldconfig
+/sbin/chkconfig --add o2cb
+/sbin/chkconfig --add %{name}
+%service o2cb restart
+%service %{name} restart
+
+%preun
+if [ "$1" = "0" ]; then
+	%service -q %{name} stop
+	%service -q o2cb stop
+	/sbin/chkconfig --del %{name}
+	/sbin/chkconfig --del o2cb
+fi
 
 %files
 %defattr(644,root,root,755)
+%attr(754,root,root) /etc/rc.d/init.d/o2cb
+%attr(754,root,root) /etc/rc.d/init.d/ocfs2
 %attr(755,root,root) /sbin/*
 %{_mandir}/man8/*
 
