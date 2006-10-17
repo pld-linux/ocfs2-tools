@@ -18,6 +18,9 @@ BuildRequires:	pkgconfig
 BuildRequires:	python-devel
 BuildRequires:	readline-devel
 BuildRequires:	scons
+Requires(post):	/sbin/ldconfig
+Requires(post,preun):	/sbin/chkconfig
+Requires:	rc-scripts
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -65,8 +68,6 @@ install %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/o2cb
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%postun -p /sbin/ldconfig
-
 %post
 /sbin/ldconfig
 /sbin/chkconfig --add o2cb
@@ -81,6 +82,8 @@ if [ "$1" = "0" ]; then
 	/sbin/chkconfig --del %{name}
 	/sbin/chkconfig --del o2cb
 fi
+
+%postun -p /sbin/ldconfig
 
 %files
 %defattr(644,root,root,755)
