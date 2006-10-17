@@ -17,6 +17,7 @@ BuildRequires:	libuuid-devel
 BuildRequires:	pkgconfig
 BuildRequires:	python-devel
 BuildRequires:	readline-devel
+BuildRequires:	rpmbuild(macros) >= 1.268
 BuildRequires:	scons
 Requires(post):	/sbin/ldconfig
 Requires(post,preun):	/sbin/chkconfig
