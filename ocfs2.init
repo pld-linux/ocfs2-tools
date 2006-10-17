@@ -1,0 +1,173 @@
+#! /bin/bash
+# Copyright (c) 2005 Oracle
+# All rights reserved.
+#
+# chkconfig: 2345 25 19
+# description: Mount OCFS2 volumes at boot.
+#
+### BEGIN INIT INFO
+# Provides: ocfs2
+# Required-Start: $network o2cb
+# Required-Stop: 
+# X-UnitedLinux-Should-Start:
+# X-UnitedLinux-Should-Stop:
+# Default-Start:  2 3 5
+# Default-Stop:
+# Description:  Mount OCFS2 volumes at boot.
+### END INIT INFO
+
+if [ -f /etc/redhat-release ]
+then
+. /etc/init.d/functions
+
+init_status()
+{
+    return 0
+}
+
+success_status()
+{
+    success
+    echo
+}
+
+failure_status()
+{
+    failure $1
+    echo
+}
+
+exit_status()
+{
+    exit $?
+}
+elif [ -f /etc/SuSE-release -o -f /etc/UnitedLinux-release ]
+then
+. /etc/rc.status
+
+init_status()
+{
+    rc_reset
+}
+
+success_status()
+{
+    /bin/true
+    rc_status -v
+}
+
+failure_status()
+{
+    /bin/false
+    rc_status -v
+}
+
+exit_status()
+{
+    rc_exit
+}
+else
+init_status()
+{
+    return 0
+}
+
+success_status()
+{
+    echo "OK"
+    return 0
+}
+
+failure_status()
+{
+    echo "Failed"
+    return 0
+}
+
+exit_status()
+{
+    exit $?
+}
+fi
+
+ocfs2mounts()
+{
+    LC_ALL=C awk '$3 == "ocfs2"  { print $2 }' /proc/mounts
+}
+
+ocfs2fstab()
+{
+    LC_ALL=C awk '!/^#/ && $3 == "ocfs2" && $4 !~ /noauto/ { print $2 }' /etc/fstab
+}
+
+init_status
+
+FUSER=`which fuser`
+
+case "$1" in
+    start|reload)
+        if [ -n "`ocfs2fstab`" ] ; then
+            echo -n "Starting Oracle Cluster File System (OCFS2) "
+            mount -at ocfs2
+            if [ $? = 0 ]
+            then
+                success_status
+            else
+                failure_status "Unable to mount OCFS2 filesystems"
+            fi
+        fi
+        ;;
+    stop)
+        echo -n "Stopping Oracle Cluster File System (OCFS2) "
+        remaining="`ocfs2mounts`"
+        sig=
+        retry=3
+        while [ -n "$remaining" -a "$retry" -gt 0 ]
+        do
+            if [ "$retry" -lt 3 ]; then
+                echo -n "Retry stopping Oracle Cluster File System (OCFS2) "
+            fi
+            umount -a -t ocfs2 2>/dev/null
+            sleep 1
+
+            remaining="`ocfs2mounts`"
+            [ -z "$remaining" ] && break
+            failure_status "Unable to unmount OCFS2 filesystems"
+
+            $FUSER -km $sig $remaining >/dev/null
+            sleep 5
+            retry=$(($retry - 1))
+            sig=-9
+        done
+        [ -z "$remaining" ] && success_status
+        ;;
+    restart|force-reload)
+        $0 stop
+        $0 start
+        ;;
+    status)
+        if [ -f /proc/mounts ] ; then
+            [ -n "`ocfs2fstab`" ] && {
+                echo "Configured OCFS2 mountpoints: " `ocfs2fstab`
+            }
+
+            [ -n "`ocfs2mounts`" ] && {
+                echo "Active OCFS2 mountpoints: " `ocfs2mounts`
+            }
+        else
+            echo -n "Checking OCFS2 mountpoints: "
+            failure_status
+        fi
+        ;;
+    try-restart|condrestart)
+        $0 status
+        if test $? = 0; then
+            $0 restart
+        fi
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|status|reload|force-reload|restart|try-restart}"
+        exit 1
+esac
+
+exit_status
