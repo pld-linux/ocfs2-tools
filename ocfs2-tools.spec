@@ -1,15 +1,18 @@
 Summary:	Tools for the OCFS2 filesystem
 Summary(pl):	Narzêdzia dla systemu plików OCFS2
 Name:		ocfs2-tools
-Version:	1.2.1
+Version:	1.2.2
 Release:	1
 License:	GPL v2
 Group:		Applications/System
 Source0:	http://oss.oracle.com/projects/ocfs2-tools/dist/files/source/v1.2/%{name}-%{version}.tar.gz
-# Source0-md5:	62c24ae0f3016eb5c15f0dfc90fe956a
+# Source0-md5:	ac6357bf9c53c53ad8e60f50820955b9
 Source1:	ocfs2.init
 Source2:	o2cb.init
+Patch0:		%{name}-tinfo.patch
 URL:		http://oss.oracle.com/projects/ocfs2-tools/
+BuildRequires:	autoconf
+BuildRequires:	automake
 BuildRequires:	e2fsprogs-devel
 BuildRequires:	glib2-devel
 BuildRequires:	libcom_err-devel
@@ -45,8 +48,11 @@ Interfejs GTK+ do narzêdzi OCFS2.
 
 %prep
 %setup -q
+%patch0 -p1
 
 %build
+%{__aclocal} -I .
+%{__autoconf}
 %configure \
 	--enable-dynamic-fsck=yes \
 	--enable-dynamic-ctl=yes \
