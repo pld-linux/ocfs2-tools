@@ -1,0 +1,11 @@
+diff -urN ocfs2-tools-1.2.2.org/configure.in ocfs2-tools-1.2.2/configure.in
+--- ocfs2-tools-1.2.2.org/configure.in	2006-10-19 19:10:53.000000000 +0200
++++ ocfs2-tools-1.2.2/configure.in	2007-01-04 20:31:15.826232250 +0100
+@@ -98,6 +98,7 @@
+ AC_SUBST(UUID_LIBS)
+ 
+ NCURSES_LIBS=
++AC_CHECK_LIB(tinfo, tgetstr, NCURSES_LIBS=-ltinfo)
+ AC_CHECK_LIB(ncurses, tgetstr, NCURSES_LIBS=-lncurses)
+ if test "x$NCURSES_LIBS" = "x"; then
+   AC_MSG_ERROR([Unable to find ncurses library])
