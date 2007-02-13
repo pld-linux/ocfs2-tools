@@ -1,5 +1,5 @@
 Summary:	Tools for the OCFS2 filesystem
-Summary(pl.UTF-8):   Narzędzia dla systemu plików OCFS2
+Summary(pl.UTF-8):	Narzędzia dla systemu plików OCFS2
 Name:		ocfs2-tools
 Version:	1.2.2
 Release:	2
@@ -35,7 +35,7 @@ Narzędzia do tworzenia i zarządzania wolumenami OCFS2.
 
 %package gtk
 Summary:	GTK+ interface to OCFS2 Tools
-Summary(pl.UTF-8):   Interfejs GTK+ do narzędzi OCFS2
+Summary(pl.UTF-8):	Interfejs GTK+ do narzędzi OCFS2
 Group:		X11/Applications
 Requires:	%{name} = %{version}-%{release}
 Requires:	python-pygtk-gtk
