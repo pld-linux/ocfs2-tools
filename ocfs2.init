@@ -1,29 +1,29 @@
-#! /bin/bash
+#!/bin/sh
 # Copyright (c) 2005 Oracle
 # All rights reserved.
 #
-# chkconfig: 2345 25 19
-# description: Mount OCFS2 volumes at boot.
+# chkconfig:	2345 25 19
+# description:	Mount OCFS2 volumes at boot.
 #
-### BEGIN INIT INFO
-# Provides: ocfs2
-# Required-Start: $network o2cb
-# Required-Stop: 
-# X-UnitedLinux-Should-Start:
-# X-UnitedLinux-Should-Stop:
-# Default-Start:  2 3 5
-# Default-Stop:
-# Description:  Mount OCFS2 volumes at boot.
-### END INIT INFO
 
-if [ -f /etc/redhat-release ]
-then
-. /etc/init.d/functions
+# Source function library
+. /etc/rc.d/init.d/functions
 
-init_status()
-{
-    return 0
-}
+# Get network config
+. /etc/sysconfig/network
+
+# Get service config
+[ -f /etc/sysconfig/ocfs2 ] && . /etc/sysconfig/ocfs2
+
+# Check that networking is up.
+if is_yes "${NETWORKING}"; then
+	if [ ! -f /var/lock/subsys/network -a "$1" != stop -a "$1" != status ]; then
+		msg_network_down OCFS2
+	exit 1
+	fi
+else
+	exit 0
+fi
 
 success_status()
 {
@@ -37,59 +37,6 @@ failure_status()
     echo
 }
 
-exit_status()
-{
-    exit $?
-}
-elif [ -f /etc/SuSE-release -o -f /etc/UnitedLinux-release ]
-then
-. /etc/rc.status
-
-init_status()
-{
-    rc_reset
-}
-
-success_status()
-{
-    /bin/true
-    rc_status -v
-}
-
-failure_status()
-{
-    /bin/false
-    rc_status -v
-}
-
-exit_status()
-{
-    rc_exit
-}
-else
-init_status()
-{
-    return 0
-}
-
-success_status()
-{
-    echo "OK"
-    return 0
-}
-
-failure_status()
-{
-    echo "Failed"
-    return 0
-}
-
-exit_status()
-{
-    exit $?
-}
-fi
-
 ocfs2mounts()
 {
     LC_ALL=C awk '$3 == "ocfs2"  { print $2 }' /proc/mounts
@@ -100,25 +47,22 @@ ocfs2fstab()
     LC_ALL=C awk '!/^#/ && $3 == "ocfs2" && $4 !~ /noauto/ { print $2 }' /etc/fstab
 }
 
-init_status
-
-FUSER=`which fuser`
+RETVAL=0
 
 case "$1" in
     start|reload)
-        if [ -n "`ocfs2fstab`" ] ; then
-            echo -n "Starting Oracle Cluster File System (OCFS2) "
-            mount -at ocfs2
-            if [ $? = 0 ]
-            then
-                success_status
-            else
-                failure_status "Unable to mount OCFS2 filesystems"
-            fi
-        fi
+    	if [ ! -f /var/lock/subsys/ocfs2 ]; then
+	        if [ -n "`ocfs2fstab`" ] ; then
+		    run_cmd "Mounting OCFS2 filesystems" mount -a -t ocfs2
+		    touch /var/lock/subsys/ocfs2
+	fi
+	else
+		msg_already_running "OCFS2 filesystems"
+	fi
         ;;
     stop)
-        echo -n "Stopping Oracle Cluster File System (OCFS2) "
+        show "Oracle Cluster File System (OCFS2) "
+	busy
         remaining="`ocfs2mounts`"
         sig=
         retry=3
@@ -127,19 +71,20 @@ case "$1" in
             if [ "$retry" -lt 3 ]; then
                 echo -n "Retry stopping Oracle Cluster File System (OCFS2) "
             fi
-            umount -a -t ocfs2 2>/dev/null
+            umount -a -t ocfs2 > /dev/null 2>&1
             sleep 1
 
             remaining="`ocfs2mounts`"
             [ -z "$remaining" ] && break
             failure_status "Unable to unmount OCFS2 filesystems"
 
-            $FUSER -km $sig $remaining >/dev/null
+            /sbin/fuser -k -m $sig $remaining
             sleep 5
             retry=$(($retry - 1))
             sig=-9
         done
-        [ -z "$remaining" ] && success_status
+        [ -z "$remaining" ] && ok
+	rm -f /var/lock/subsys/nfsfs
         ;;
     restart|force-reload)
         $0 stop
@@ -166,8 +111,8 @@ case "$1" in
         fi
         ;;
     *)
-        echo "Usage: $0 {start|stop|status|reload|force-reload|restart|try-restart}"
-        exit 1
+        msg_usage "$0 {start|stop|status|reload|force-reload|restart|try-restart}"
+        exit 3
 esac
 
-exit_status
+exit $RETVAL
