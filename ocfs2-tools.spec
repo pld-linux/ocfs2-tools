@@ -1,5 +1,6 @@
 #
-%bcond_without gtk2 # Build without GTK
+# Conditional build:
+%bcond_without gtk2	# build without GTK
 #
 Summary:	Tools for the OCFS2 filesystem
 Summary(pl.UTF-8):	Narzędzia dla systemu plików OCFS2
