@@ -1,3 +1,6 @@
+#
+%bcond_without gtk2 # Build without GTK
+#
 Summary:	Tools for the OCFS2 filesystem
 Summary(pl.UTF-8):	Narzędzia dla systemu plików OCFS2
 Name:		ocfs2-tools
@@ -18,7 +21,8 @@ BuildRequires:	device-mapper-devel
 BuildRequires:	e2fsprogs-devel
 BuildRequires:	glib2-devel
 BuildRequires:	pkgconfig
-BuildRequires:	python-devel
+%{?with_gtk2:BuildRequires:	python-devel}
+%{?with_gtk2:BuildRequires:	python-pygtk-gtk}
 BuildRequires:	readline-devel
 BuildRequires:	rpmbuild(macros) >= 1.268
 #BuildRequires:	scons
@@ -56,7 +60,7 @@ Interfejs GTK+ do narzędzi OCFS2.
 %configure \
 	--enable-dynamic-fsck=yes \
 	--enable-dynamic-ctl=yes \
-	--enable-ocfs2console=yes
+	%{?with_gtk2:--enable-ocfs2console=yes}
 %{__make}
 
 %install
@@ -72,9 +76,11 @@ install %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/o2cb
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/o2cb
 install -d $RPM_BUILD_ROOT/dlm
 
+%if %{with gtk2}
 %py_ocomp $RPM_BUILD_ROOT%{py_sitedir}
 %py_comp $RPM_BUILD_ROOT%{py_sitedir}
 rm $RPM_BUILD_ROOT%{py_sitedir}/ocfs2interface/*.py
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -107,9 +113,11 @@ fi
 %dir /dlm
 %{_mandir}/man8/*
 
+%if %{with gtk2}
 %files gtk
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_sbindir}/*
 %dir %{py_sitedir}/ocfs2interface
 %attr(755,root,root) %{py_sitedir}/ocfs2interface/*.so
 %{py_sitedir}/ocfs2interface/*.py[co]
+%endif
