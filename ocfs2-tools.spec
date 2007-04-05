@@ -19,7 +19,6 @@ BuildRequires:	e2fsprogs-devel
 BuildRequires:	glib2-devel
 BuildRequires:	pkgconfig
 BuildRequires:	python-devel
-BuildRequires:	python-pygtk-gobject
 BuildRequires:	readline-devel
 BuildRequires:	rpmbuild(macros) >= 1.268
 #BuildRequires:	scons
