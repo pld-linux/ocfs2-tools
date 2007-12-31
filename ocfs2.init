@@ -84,7 +84,7 @@ case "$1" in
             sig=-9
         done
         [ -z "$remaining" ] && ok
-	rm -f /var/lock/subsys/nfsfs
+	rm -f /var/lock/subsys/ocfs2
         ;;
     restart|force-reload)
         $0 stop
