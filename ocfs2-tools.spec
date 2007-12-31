@@ -6,7 +6,7 @@ Summary:	Tools for the OCFS2 filesystem
 Summary(pl.UTF-8):	Narzędzia dla systemu plików OCFS2
 Name:		ocfs2-tools
 Version:	1.2.7
-Release:	0.1
+Release:	1
 License:	GPL v2
 Group:		Applications/System
 Source0:	http://oss.oracle.com/projects/ocfs2-tools/dist/files/source/v1.2/%{name}-%{version}.tar.gz
@@ -111,6 +111,7 @@ fi
 %attr(755,root,root) /sbin/*
 %dir /etc/ocfs2
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/ocfs2/cluster.conf
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/o2cb
 %dir /dlm
 %{_mandir}/man8/*
 
