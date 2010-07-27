@@ -5,18 +5,17 @@
 Summary:	Tools for the OCFS2 filesystem
 Summary(pl.UTF-8):	Narzędzia dla systemu plików OCFS2
 Name:		ocfs2-tools
-Version:	1.4.1
-Release:	3
+Version:	1.4.4
+Release:	0.1
 License:	GPL v2
 Group:		Applications/System
 Source0:	http://oss.oracle.com/projects/ocfs2-tools/dist/files/source/v1.4/%{name}-%{version}.tar.gz
-# Source0-md5:	92f4f9f16c3f74307ad508f5e6a300a1
+# Source0-md5:	f7ae245e8baa499aa56d7af25a7885d5
 Source1:	ocfs2.init
 Source2:	o2cb.init
 Source3:	o2cb.sysconfig
 Patch0:		%{name}-tinfo.patch
-Patch1:		%{name}-ac.patch
-Patch2:		%{name}-limits.patch
+Patch1:		%{name}-vla-initializer.patch
 URL:		http://oss.oracle.com/projects/ocfs2-tools/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -37,6 +36,8 @@ Requires(post):	/sbin/ldconfig
 Requires(post,preun):	/sbin/chkconfig
 Requires:	rc-scripts
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+
+%define		filterout_ld	-Wl,--as-needed
 
 %description
 Tools and support files for creating and managing OCFS2 volumes.
@@ -71,16 +72,17 @@ Interfejs GTK+ do narzędzi OCFS2.
 %prep
 %setup -q
 %patch0 -p1
-%patch1 -p0
-%patch2 -p0
+%patch1 -p1
 
 %build
 %{__aclocal} -I .
 %{__autoconf}
+
 %configure \
 	--enable-dynamic-fsck=yes \
 	--enable-dynamic-ctl=yes \
 	%{?with_gtk2:--enable-ocfs2console=yes}
+
 %{__make} -j1
 
 %install
