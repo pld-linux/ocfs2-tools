@@ -5,4 +5,5 @@ O2CB_ENABLED=false
 O2CB_BOOTCLUSTER=""
 
 # O2CB_HEARTBEAT_THRESHOLD: Iterations before a node is considered dead.
+# O2CB_HEARTBEAT_THRESHOLD = ( timeout_in_secs / 2 ) + 1
 O2CB_HEARTBEAT_THRESHOLD=10
