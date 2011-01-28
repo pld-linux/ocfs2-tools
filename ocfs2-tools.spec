@@ -30,6 +30,7 @@ BuildRequires:	pkgconfig
 %{?with_gtk2:BuildRequires:	python-devel}
 %{?with_gtk2:BuildRequires:	python-pygtk-gtk}
 BuildRequires:	readline-devel
+BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.268
 #BuildRequires:	scons
 Requires(post):	/sbin/ldconfig
