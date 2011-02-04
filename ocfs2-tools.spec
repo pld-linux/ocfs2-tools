@@ -54,7 +54,7 @@ Group:		Development/Libraries
 %description devel
 Header files and develpment documentation for ocfs2-tools.
 
-%description -l pl.UTF-8
+%description devel -l pl.UTF-8
 Pliki nagłówkowe i dokumetacja do ocfs2-tools.
 
 %package gtk
