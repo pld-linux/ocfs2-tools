@@ -1,0 +1,13 @@
+--- ocfs2-tools-1.4.4/include/ocfs2-kernel/ocfs2_fs.h.orig	2010-03-17 01:10:43.000000000 +0100
++++ ocfs2-tools-1.4.4/include/ocfs2-kernel/ocfs2_fs.h	2015-12-13 18:20:04.847128749 +0100
+@@ -25,6 +25,10 @@
+ #ifndef _OCFS2_FS_H
+ #define _OCFS2_FS_H
+ 
++#ifndef __KERNEL__
++typedef unsigned short umode_t;
++#endif
++
+ /* Version */
+ #define OCFS2_MAJOR_REV_LEVEL		0
+ #define OCFS2_MINOR_REV_LEVEL          	90

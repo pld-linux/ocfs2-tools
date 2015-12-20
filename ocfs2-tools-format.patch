@@ -1,0 +1,118 @@
+--- ocfs2-tools-1.4.4/fsck.ocfs2/problem.c.orig	2008-12-03 19:38:21.000000000 +0100
++++ ocfs2-tools-1.4.4/fsck.ocfs2/problem.c	2015-12-13 18:22:46.957121947 +0100
+@@ -112,9 +112,9 @@
+ 		ans = ost->ost_answer ? 'y' : 'n';
+ 	} else {
+ 		if (flags & PY)
+-			printf(yes);
++			fputs(yes, stdout);
+ 		else if (flags & PN)
+-			printf(no);
++			fputs(no, stdout);
+ 	}
+ 
+ 	fflush(stdout);
+--- ocfs2-tools-1.4.4/tunefs.ocfs2/op_query.c.orig	2009-04-14 00:10:40.000000000 +0200
++++ ocfs2-tools-1.4.4/tunefs.ocfs2/op_query.c	2015-12-13 18:47:05.127060750 +0100
+@@ -150,7 +150,7 @@
+ {
+ 	char label[OCFS2_MAX_VOL_LABEL_LEN + 1];
+ 
+-	snprintf(label, OCFS2_MAX_VOL_LABEL_LEN + 1,
++	snprintf(label, OCFS2_MAX_VOL_LABEL_LEN + 1, "%s",
+ 		 (char *)OCFS2_RAW_SB(query_fs->fs_super)->s_label);
+ 
+ 	return print_string(stream, info, args, label);
+@@ -338,7 +338,7 @@
+ 	register_printf_function('O', handle_ro_compat, handle_arginfo);
+ 
+ 	query_fs = fs;
+-	fprintf(stdout, fmt);
++	fprintf(stdout, fmt, NULL /* hack */);
+ 	query_fs = NULL;
+ 
+ 	ocfs2_free(&fmt);
+--- ocfs2-tools-1.4.4/debugfs.ocfs2/commands.c.orig	2010-03-17 01:10:43.000000000 +0100
++++ ocfs2-tools-1.4.4/debugfs.ocfs2/commands.c	2015-12-13 19:23:59.780301145 +0100
+@@ -677,7 +677,7 @@
+ 	gbls.cwd = strdup("/");
+ 
+ 	/* lookup heartbeat file */
+-	snprintf (sysfile, sizeof(sysfile),
++	snprintf (sysfile, sizeof(sysfile), "%s",
+ 		  ocfs2_system_inodes[HEARTBEAT_SYSTEM_INODE].si_name);
+ 	ret = ocfs2_lookup(gbls.fs, gbls.sysdir_blkno, sysfile,
+ 			   strlen(sysfile), NULL, &gbls.hb_blkno);
+@@ -685,7 +685,7 @@
+ 		gbls.hb_blkno = 0;
+ 
+ 	/* lookup slotmap file */
+-	snprintf (sysfile, sizeof(sysfile),
++	snprintf (sysfile, sizeof(sysfile), "%s",
+ 		  ocfs2_system_inodes[SLOT_MAP_SYSTEM_INODE].si_name);
+ 	ret = ocfs2_lookup(gbls.fs, gbls.sysdir_blkno, sysfile,
+ 			   strlen(sysfile), NULL, &gbls.slotmap_blkno);
+--- ocfs2-tools-1.4.4/debugfs.ocfs2/find_block_inode.c.orig	2010-03-11 20:29:36.000000000 +0100
++++ ocfs2-tools-1.4.4/debugfs.ocfs2/find_block_inode.c	2015-12-13 19:24:25.760300055 +0100
+@@ -203,7 +203,7 @@
+ 	char sysfile[50];
+ 	errcode_t ret = 0;
+ 
+-	snprintf(sysfile, sizeof(sysfile),
++	snprintf(sysfile, sizeof(sysfile), "%s",
+ 		 ocfs2_system_inodes[GLOBAL_BITMAP_SYSTEM_INODE].si_name);
+ 
+ 	ret = ocfs2_lookup(fs, fs->fs_sysdir_blkno, sysfile,
+--- ocfs2-tools-1.4.4/mount.ocfs2/mount.ocfs2.c.orig	2015-12-13 17:42:28.663890097 +0100
++++ ocfs2-tools-1.4.4/mount.ocfs2/mount.ocfs2.c	2015-12-13 19:25:34.140297185 +0100
+@@ -185,7 +185,7 @@
+ 	}
+ 
+ 	if (mo->type && strcmp(mo->type, OCFS2_FS_NAME)) {
+-		com_err(progname, OCFS2_ET_UNKNOWN_FILESYSTEM, mo->type);
++		com_err(progname, OCFS2_ET_UNKNOWN_FILESYSTEM, "%s", mo->type);
+ 		return -1;
+ 	}
+ 
+--- ocfs2-tools-1.4.4/fswreck/corrupt.c.orig	2010-03-17 01:11:06.000000000 +0100
++++ ocfs2-tools-1.4.4/fswreck/corrupt.c	2015-12-13 19:27:51.333624758 +0100
+@@ -49,7 +49,7 @@
+ 	case 10:
+ 	case 11:
+ 	case 12:
+-		snprintf(sysfile, sizeof(sysfile),
++		snprintf(sysfile, sizeof(sysfile), "%s",
+ 			 ocfs2_system_inodes[GLOBAL_BITMAP_SYSTEM_INODE].si_name);
+ 		break;
+ #ifdef _LATER_
+--- ocfs2-tools-1.4.4/fswreck/chain.c.orig	2010-02-25 03:06:23.000000000 +0100
++++ ocfs2-tools-1.4.4/fswreck/chain.c	2015-12-13 19:28:24.540290032 +0100
+@@ -345,7 +345,7 @@
+ 	struct ocfs2_super_block *sb = OCFS2_RAW_SB(fs->fs_super);
+ 	
+ 	if (slotnum == UINT16_MAX)
+-		snprintf(sysfile, sizeof(sysfile),
++		snprintf(sysfile, sizeof(sysfile), "%s",
+ 		ocfs2_system_inodes[GLOBAL_BITMAP_SYSTEM_INODE].si_name);
+ 	else
+ 		snprintf(sysfile, sizeof(sysfile),
+@@ -401,7 +401,7 @@
+ 	uint64_t blkno;
+ 	struct ocfs2_super_block *sb = OCFS2_RAW_SB(fs->fs_super);
+ 
+-	snprintf(sysfile, sizeof(sysfile),
++	snprintf(sysfile, sizeof(sysfile), "%s",
+ 		 ocfs2_system_inodes[GLOBAL_BITMAP_SYSTEM_INODE].si_name);
+ 
+ 	ret = ocfs2_lookup(fs, sb->s_system_dir_blkno, sysfile,
+--- ocfs2-tools-1.4.4/fswreck/group.c.orig	2010-02-25 03:06:24.000000000 +0100
++++ ocfs2-tools-1.4.4/fswreck/group.c	2015-12-13 19:29:30.580287261 +0100
+@@ -214,7 +214,7 @@
+ 	struct ocfs2_super_block *sb = OCFS2_RAW_SB(fs->fs_super);
+ 	
+ 	if (slotnum == UINT16_MAX)
+-		snprintf(sysfile, sizeof(sysfile),
++		snprintf(sysfile, sizeof(sysfile), "%s",
+ 		ocfs2_system_inodes[GLOBAL_BITMAP_SYSTEM_INODE].si_name);
+ 	else
+ 		snprintf(sysfile, sizeof(sysfile),

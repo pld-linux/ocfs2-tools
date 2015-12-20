@@ -1,0 +1,17 @@
+--- ocfs2-tools-1.4.4/configure.in.orig	2015-12-20 18:30:44.175054200 +0100
++++ ocfs2-tools-1.4.4/configure.in	2015-12-20 21:54:38.464540770 +0100
+@@ -256,10 +256,13 @@
+         # TRY="$TRY"
+ 
+         saved_LDFLAGS="$LDFLAGS"
+-        LDFLAGS="$LDFLAGS $TRY -lcpg"
++	saved_LIBS="$LIBS"
++        LDFLAGS="$LDFLAGS $TRY"
++        LIBS="$LIBS -lcpg"
+         AC_LINK_IFELSE([AC_LANG_CALL([], [cpg_initialize])],
+         	       cpg_found=yes)
+         LDFLAGS="$saved_LDFLAGS"
++        LIBS="$saved_LIBS"
+ 
+         if test "x$cpg_found" = "xyes"; then
+             CPG_LDFLAGS="$TRY"
