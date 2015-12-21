@@ -10,18 +10,17 @@
 Summary:	Tools for the OCFS2 filesystem
 Summary(pl.UTF-8):	Narzędzia dla systemu plików OCFS2
 Name:		ocfs2-tools
-Version:	1.4.4
-Release:	5
+Version:	1.6.4
+Release:	1
 License:	GPL v2+
 Group:		Applications/System
 #Source0Download: https://oss.oracle.com/projects/ocfs2-tools/files/source/
-Source0:	https://oss.oracle.com/projects/ocfs2-tools/dist/files/source/v1.4/%{name}-%{version}.tar.gz
-# Source0-md5:	f7ae245e8baa499aa56d7af25a7885d5
+Source0:	https://oss.oracle.com/projects/ocfs2-tools/dist/files/source/v1.6/%{name}-%{version}.tar.gz
+# Source0-md5:	2e94423507b63fcc08f93c094e789be8
 Source1:	ocfs2.init
 Source2:	o2cb.init
 Source3:	o2cb.sysconfig
 Patch0:		%{name}-tinfo.patch
-Patch1:		%{name}-vla-initializer.patch
 Patch2:		%{name}-linux.patch
 Patch3:		%{name}-format.patch
 Patch4:		%{name}-link.patch
@@ -85,7 +84,6 @@ Interfejs GTK+ do narzędzi OCFS2.
 %prep
 %setup -q
 %patch0 -p1
-%patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
@@ -167,10 +165,13 @@ fi
 %attr(755,root,root) /sbin/ocfs2_controld.pcmk
 %endif
 %endif
+%attr(755,root,root) %{_bindir}/o2info
+%attr(755,root,root) %{_sbindir}/o2hbmonitor
 %dir %{_sysconfdir}/ocfs2
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ocfs2/cluster.conf
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/o2cb
 %dir /dlm
+%{_mandir}/man1/o2info.1*
 %{_mandir}/man7/o2cb.7*
 %{_mandir}/man8/debugfs.ocfs2.8*
 %{_mandir}/man8/fsck.ocfs2.8*

@@ -74,17 +74,6 @@
  		return -1;
  	}
  
---- ocfs2-tools-1.4.4/fswreck/corrupt.c.orig	2010-03-17 01:11:06.000000000 +0100
-+++ ocfs2-tools-1.4.4/fswreck/corrupt.c	2015-12-13 19:27:51.333624758 +0100
-@@ -49,7 +49,7 @@
- 	case 10:
- 	case 11:
- 	case 12:
--		snprintf(sysfile, sizeof(sysfile),
-+		snprintf(sysfile, sizeof(sysfile), "%s",
- 			 ocfs2_system_inodes[GLOBAL_BITMAP_SYSTEM_INODE].si_name);
- 		break;
- #ifdef _LATER_
 --- ocfs2-tools-1.4.4/fswreck/chain.c.orig	2010-02-25 03:06:23.000000000 +0100
 +++ ocfs2-tools-1.4.4/fswreck/chain.c	2015-12-13 19:28:24.540290032 +0100
 @@ -345,7 +345,7 @@
@@ -116,3 +105,39 @@
  		ocfs2_system_inodes[GLOBAL_BITMAP_SYSTEM_INODE].si_name);
  	else
  		snprintf(sysfile, sizeof(sysfile),
+--- ocfs2-tools-1.6.4/extras/check_metaecc.c.orig	2010-12-10 20:37:07.000000000 +0100
++++ ocfs2-tools-1.6.4/extras/check_metaecc.c	2015-12-20 22:26:27.487793994 +0100
+@@ -163,7 +163,7 @@
+ 		if (crc == new_check.bc_crc32e) {
+ 			snprintf(outbuf + result_offset,
+ 				sizeof(outbuf) - result_offset, "PASS\n");
+-			fprintf(stderr, outbuf);
++			fputs(outbuf, stderr);
+ 			goto do_check_end;
+ 		}
+ 
+@@ -176,13 +176,13 @@
+ 		if (crc == new_check.bc_crc32e) {
+ 			snprintf(outbuf + result_offset,
+ 				sizeof(outbuf) - result_offset, "ECC Fixup\n");
+-			fprintf(stderr, outbuf);
++			fputs(outbuf, stderr);
+ 			goto do_check_end;
+ 		}
+ 
+ 		snprintf(outbuf + result_offset,
+ 			sizeof(outbuf) - result_offset, "FAIL\n");
+-		fprintf(stderr, outbuf);
++		fputs(outbuf, stderr);
+ 
+ 		offset = snprintf(outbuf, sizeof(outbuf), "Calculated");
+ 		while (offset < crc_offset)
+@@ -190,7 +190,7 @@
+ 		snprintf(outbuf + crc_offset, sizeof(outbuf) - crc_offset,
+ 			"CRC32: %.8"PRIx32"    ECC: %.4"PRIx16"\n",
+ 			crc, ecc);
+-		fprintf(stderr, outbuf);
++		fputs(outbuf, stderr);
+ 		err = -1;
+ do_check_end:
+ 		check.bc_crc32e = cpu_to_le32(new_check.bc_crc32e);
