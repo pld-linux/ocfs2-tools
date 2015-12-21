@@ -1,6 +1,6 @@
 #
 # Conditional build:
-%bcond_without	cman		# cman support
+%bcond_with	cman		# cman support
 %bcond_without	corosync	# Corosync support
 %bcond_without	dlm		# DLM support
 %bcond_with	openais		# OpenAIS ckpt support
