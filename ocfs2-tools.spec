@@ -10,13 +10,12 @@
 Summary:	Tools for the OCFS2 filesystem
 Summary(pl.UTF-8):	Narzędzia dla systemu plików OCFS2
 Name:		ocfs2-tools
-Version:	1.6.4
-Release:	3
+Version:	1.8.6
+Release:	1
 License:	GPL v2+
 Group:		Applications/System
-#Source0Download: https://oss.oracle.com/projects/ocfs2-tools/files/source/
-Source0:	https://oss.oracle.com/projects/ocfs2-tools/dist/files/source/v1.6/%{name}-%{version}.tar.gz
-# Source0-md5:	2e94423507b63fcc08f93c094e789be8
+Source0:	https://github.com/markfasheh/ocfs2-tools/archive/%{name}-%{version}.tar.gz
+# Source0-md5:	fc64af70a6a2533948f47fa9cb2fc1c4
 Source1:	ocfs2.init
 Source2:	o2cb.init
 Source3:	o2cb.sysconfig
@@ -82,11 +81,13 @@ GTK+ interface to OCFS2 Tools.
 Interfejs GTK+ do narzędzi OCFS2.
 
 %prep
-%setup -q
+%setup -q -n %{name}-%{name}-%{version}
 %patch0 -p1
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+
+sed -i -e 's#-Wno-format##g' */Makefile
 
 %build
 %{__aclocal} -I .
@@ -149,11 +150,14 @@ fi
 %attr(754,root,root) /etc/rc.d/init.d/o2cb
 %attr(754,root,root) /etc/rc.d/init.d/ocfs2
 %attr(755,root,root) /sbin/debugfs.ocfs2
+%attr(755,root,root) /sbin/defragfs.ocfs2
 %attr(755,root,root) /sbin/fsck.ocfs2
 %attr(755,root,root) /sbin/mkfs.ocfs2
-%attr(755,root,root) /sbin/mount.ocfs2
 %attr(755,root,root) /sbin/mounted.ocfs2
+%attr(755,root,root) /sbin/mount.ocfs2
+%attr(755,root,root) /sbin/o2cb
 %attr(755,root,root) /sbin/o2cb_ctl
+%attr(755,root,root) /sbin/o2cluster
 %attr(755,root,root) /sbin/o2image
 %attr(755,root,root) /sbin/ocfs2_hb_ctl
 %attr(755,root,root) /sbin/tunefs.ocfs2
@@ -172,14 +176,21 @@ fi
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/o2cb
 %dir /dlm
 %{_mandir}/man1/o2info.1*
+%{_mandir}/man5/o2cb.sysconfig.5.*
+%{_mandir}/man5/ocfs2.cluster.conf.5.*
 %{_mandir}/man7/o2cb.7*
+%{_mandir}/man7/ocfs2.7.*
 %{_mandir}/man8/debugfs.ocfs2.8*
+%{_mandir}/man8/defragfs.ocfs2.8.*
 %{_mandir}/man8/fsck.ocfs2.8*
 %{_mandir}/man8/fsck.ocfs2.checks.8*
 %{_mandir}/man8/mkfs.ocfs2.8*
-%{_mandir}/man8/mount.ocfs2.8*
 %{_mandir}/man8/mounted.ocfs2.8*
+%{_mandir}/man8/mount.ocfs2.8*
+%{_mandir}/man8/o2cb.8.*
 %{_mandir}/man8/o2cb_ctl.8*
+%{_mandir}/man8/o2cluster.8.*
+%{_mandir}/man8/o2hbmonitor.8.*
 %{_mandir}/man8/o2image.8*
 %{_mandir}/man8/ocfs2_hb_ctl.8*
 %{_mandir}/man8/tunefs.ocfs2.8*
