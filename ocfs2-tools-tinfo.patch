@@ -1,8 +1,7 @@
-diff -urN ocfs2-tools-1.2.2.org/configure.in ocfs2-tools-1.2.2/configure.in
---- ocfs2-tools-1.2.2.org/configure.in	2006-10-19 19:10:53.000000000 +0200
-+++ ocfs2-tools-1.2.2/configure.in	2007-01-04 20:31:15.826232250 +0100
-@@ -98,6 +98,7 @@
- AC_SUBST(UUID_LIBS)
+--- ocfs2-tools-ocfs2-tools-1.8.8/configure.in.orig	2024-07-22 08:38:57.069461675 +0200
++++ ocfs2-tools-ocfs2-tools-1.8.8/configure.in	2024-07-22 18:13:33.396020729 +0200
+@@ -124,6 +124,7 @@ AC_CHECK_HEADER(libaio.h, :,
+ AC_SUBST(AIO_LIBS)
  
  NCURSES_LIBS=
 +AC_CHECK_LIB(tinfo, tgetstr, NCURSES_LIBS=-ltinfo)

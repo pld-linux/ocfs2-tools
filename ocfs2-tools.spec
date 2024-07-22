@@ -10,12 +10,13 @@
 Summary:	Tools for the OCFS2 filesystem
 Summary(pl.UTF-8):	Narzędzia dla systemu plików OCFS2
 Name:		ocfs2-tools
-Version:	1.8.6
+Version:	1.8.8
 Release:	1
 License:	GPL v2+
 Group:		Applications/System
+#Source0Download: https://github.com/markfasheh/ocfs2-tools/tags
 Source0:	https://github.com/markfasheh/ocfs2-tools/archive/%{name}-%{version}.tar.gz
-# Source0-md5:	fc64af70a6a2533948f47fa9cb2fc1c4
+# Source0-md5:	a8f4bd190f7b8819ab75b29ee1b57ec0
 Source1:	ocfs2.init
 Source2:	o2cb.init
 Source3:	o2cb.sysconfig
@@ -23,7 +24,7 @@ Patch0:		%{name}-tinfo.patch
 Patch2:		%{name}-linux.patch
 Patch3:		%{name}-format.patch
 Patch4:		%{name}-link.patch
-URL:		http://oss.oracle.com/projects/ocfs2-tools/
+URL:		https://github.com/markfasheh/ocfs2-tools
 BuildRequires:	autoconf >= 2.54
 BuildRequires:	automake
 %{?with_cman:BuildRequires:	cman-devel}
@@ -32,6 +33,7 @@ BuildRequires:	device-mapper-devel
 %{?with_dlm:BuildRequires:	dlm-devel}
 BuildRequires:	e2fsprogs-devel
 BuildRequires:	glib2-devel >= 2.2.3
+BuildRequires:	libaio-devel
 BuildRequires:	libblkid-devel >= 1.36
 BuildRequires:	libcom_err-devel
 BuildRequires:	libuuid-devel
@@ -40,7 +42,7 @@ BuildRequires:	ncurses-devel
 %{?with_pacemaker:BuildRequires:	pacemaker-devel}
 BuildRequires:	pkgconfig
 %{?with_gtk2:BuildRequires:	python-devel >= 1:2.3}
-%{?with_gtk2:BuildRequires:	python-pygtk-gtk}
+%{?with_gtk2:BuildRequires:	python-pygtk-gtk >= 2:2.0}
 BuildRequires:	readline-devel
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.268
@@ -72,7 +74,7 @@ Summary:	GTK+ interface to OCFS2 Tools
 Summary(pl.UTF-8):	Interfejs GTK+ do narzędzi OCFS2
 Group:		X11/Applications
 Requires:	%{name} = %{version}-%{release}
-Requires:	python-pygtk-gtk
+Requires:	python-pygtk-gtk >= 2:2.0
 
 %description gtk
 GTK+ interface to OCFS2 Tools.
@@ -87,7 +89,8 @@ Interfejs GTK+ do narzędzi OCFS2.
 %patch3 -p1
 %patch4 -p1
 
-sed -i -e 's#-Wno-format##g' */Makefile
+%{__sed} -i -e 's#-Wno-format##g' */Makefile
+%{__sed} -i -e '1s,/usr/bin/python ,%{__python} ,' ocfs2console/ocfs2console
 
 %build
 %{__aclocal} -I .
@@ -99,9 +102,9 @@ sed -i -e 's#-Wno-format##g' */Makefile
 	%{!?with_dlm:ac_cv_lib_dlmcontrol_dlmc_fs_connect=no} \
 	%{!?with_openais:ac_cv_header_openais_saCkpt_h=no} \
 	%{!?with_pacemaker:ac_cv_lib_crmcluster_crm_get_peer=no} \
-	--enable-dynamic-fsck=yes \
-	--enable-dynamic-ctl=yes \
-	%{?with_gtk2:--enable-ocfs2console=yes}
+	--enable-dynamic-fsck \
+	--enable-dynamic-ctl \
+	%{?with_gtk2:--enable-ocfs2console}
 
 %{__make} -j1
 
