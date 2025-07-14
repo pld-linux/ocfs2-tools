@@ -84,10 +84,10 @@ Interfejs GTK+ do narzędzi OCFS2.
 
 %prep
 %setup -q -n %{name}-%{name}-%{version}
-%patch0 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
+%patch -P0 -p1
+%patch -P2 -p1
+%patch -P3 -p1
+%patch -P4 -p1
 
 %{__sed} -i -e 's#-Wno-format##g' */Makefile
 %{__sed} -i -e '1s,/usr/bin/python ,%{__python} ,' ocfs2console/ocfs2console
